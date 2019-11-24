@@ -12,7 +12,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,15 +21,13 @@ public class WebDriverTest {
 
   private static final Logger logger = LoggerFactory.getLogger(WebDriverTest.class);
 
-  //TODO: fix port
-  @LocalServerPort
-  private static int serverPort;
+  private static String serverPort = "8080";
 
   private static WebDriver _webDriver;
 
   private static String TEST_USER = "user1";
-  private static String LOGIN_URL = "http://localhost:8080/";
-  private static String INDEX_URL = String.format("http://localhost:%s/index/%s", "8080", TEST_USER);
+  private static String LOGIN_URL = String.format("http://localhost:%s/", serverPort);
+  private static String INDEX_URL = String.format("http://localhost:%s/index/%s", serverPort, TEST_USER);
   private static String SEND_BUTTON_ID = "sendMsgToServer";
   private static String MESSAGE_CONTAINER_CLASS = "message-container";
   private static String MESSAGE_CONTENT_CLASS = "message-content";
@@ -51,27 +48,21 @@ public class WebDriverTest {
   }
 
   @Test
-  void testLoginPage() {
-    logger.info("LOGIN_URL=====" + LOGIN_URL);
+  void testLoginAndJoinChatRoom() {
+    logger.debug("LOGIN_URL: " + LOGIN_URL);
     _webDriver.get(LOGIN_URL);
     WebElement inputUsername = _webDriver.findElement(By.id(USERNAME_INPUT_ID));
+    assertTrue(inputUsername.isDisplayed());
+    inputUsername.sendKeys(TEST_USER);
+
     WebElement loginButton = _webDriver.findElement(By.id(LOGIN_BUTTON_ID));
     assertTrue(loginButton.isDisplayed());
-    assertTrue(inputUsername.isDisplayed());
-  }
-
-  @Test
-  void testJoinChatRoom() {
-    _webDriver.get(LOGIN_URL);
-    WebElement inputUsername = _webDriver.findElement(By.id(USERNAME_INPUT_ID));
-    assertNotNull(inputUsername);
-    inputUsername.sendKeys(TEST_USER);
-    WebElement loginButton = _webDriver.findElement(By.id(LOGIN_BUTTON_ID));
     loginButton.click();
+
     try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      logger.error("Unexpected error during test: ", e);
     }
 
     String currentUrl = _webDriver.getCurrentUrl();
@@ -96,7 +87,7 @@ public class WebDriverTest {
     try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      logger.error("Unexpected error during test: ", e);
     }
 
     String expectedMsg = String.format("%s：%s", TEST_USER, testMsg);
@@ -114,7 +105,7 @@ public class WebDriverTest {
     try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      logger.error("Unexpected error during test: ", e);
     }
 
     String currentUrl = _webDriver.getCurrentUrl();
