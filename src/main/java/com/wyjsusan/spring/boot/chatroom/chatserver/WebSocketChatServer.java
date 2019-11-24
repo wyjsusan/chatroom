@@ -42,7 +42,6 @@ public class WebSocketChatServer {
     onlineSessions.put(session.getId(), session);
     String username = session.getPathParameters().get("username");
 
-//    System.out.println("username =====" + username);
     Message message = new Message();
     message.setType(MessageType.JOIN_LEFT.name());
     message.setUsername(username);

@@ -23,7 +23,7 @@ class ChatControllerTest {
     _mvc.perform(MockMvcRequestBuilders.get("/"))
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-        .andExpect(view().name("/login"));
+        .andExpect(view().name("login"));
   }
 
   @Test
@@ -31,7 +31,7 @@ class ChatControllerTest {
     _mvc.perform(MockMvcRequestBuilders.get("/index/user1"))
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-        .andExpect(view().name("/chat"))
+        .andExpect(view().name("chat"))
         .andExpect(model().attribute("username", "user1"))
         .andExpect(model().attribute("webSocketUrl", "ws://localhost:8080/chat/user1"));
   }

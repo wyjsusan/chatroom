@@ -15,7 +15,7 @@ public class ChatController {
    */
   @GetMapping("/")
   public ModelAndView login() {
-    return new ModelAndView("/login");
+    return new ModelAndView("login");
   }
 
   /**
@@ -26,6 +26,6 @@ public class ChatController {
     //TODO: add code for login to chatroom.
     model.addAttribute("username", username);
     model.addAttribute("webSocketUrl", "ws://localhost:8080/chat/" + username);
-    return new ModelAndView("/chat", "model", model);
+    return new ModelAndView("chat", "model", model);
   }
 }
