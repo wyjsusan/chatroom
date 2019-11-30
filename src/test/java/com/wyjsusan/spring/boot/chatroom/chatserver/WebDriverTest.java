@@ -12,22 +12,21 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebDriverTest {
 
   private static final Logger logger = LoggerFactory.getLogger(WebDriverTest.class);
 
-  private static String serverPort = "8080";
+  @LocalServerPort
+  private int serverPort;
 
   private static WebDriver _webDriver;
-
   private static String TEST_USER = "user1";
-  private static String LOGIN_URL = String.format("http://localhost:%s/", serverPort);
-  private static String INDEX_URL = String.format("http://localhost:%s/index/%s", serverPort, TEST_USER);
   private static String SEND_BUTTON_ID = "sendMsgToServer";
   private static String MESSAGE_CONTAINER_CLASS = "message-container";
   private static String MESSAGE_CONTENT_CLASS = "message-content";
@@ -49,7 +48,9 @@ public class WebDriverTest {
 
   @Test
   void testLoginAndJoinChatRoom() {
+    String LOGIN_URL = String.format("http://localhost:%d/", serverPort);
     logger.debug("LOGIN_URL: " + LOGIN_URL);
+    String INDEX_URL = String.format("http://localhost:%d/index?username=%s", serverPort, TEST_USER);
     _webDriver.get(LOGIN_URL);
     WebElement inputUsername = _webDriver.findElement(By.id(USERNAME_INPUT_ID));
     assertTrue(inputUsername.isDisplayed());
@@ -66,6 +67,7 @@ public class WebDriverTest {
     }
 
     String currentUrl = _webDriver.getCurrentUrl();
+    logger.info("currentUrl=======" + currentUrl);
     assertEquals(INDEX_URL, currentUrl);
 
     WebElement onlineCount = _webDriver.findElement(By.id(ONLINE_USER_SPAN_ID));
@@ -74,6 +76,7 @@ public class WebDriverTest {
 
   @Test
   void testSendMessage() {
+    String INDEX_URL = String.format("http://localhost:%d/index?username=%s", serverPort, TEST_USER);
     String testMsg = "Test Message";
     _webDriver.get(INDEX_URL);
     WebElement msgContainer = _webDriver.findElement(By.className(MESSAGE_CONTAINER_CLASS));
@@ -98,6 +101,7 @@ public class WebDriverTest {
 
   @Test
   void testExitChatRoom() {
+    String INDEX_URL = String.format("http://localhost:%d/index?username=%s", serverPort, TEST_USER);
     _webDriver.get(INDEX_URL);
     WebElement exitButton = _webDriver.findElement(By.id(EXIT_BUTTON_ID));
     exitButton.click();
@@ -109,6 +113,7 @@ public class WebDriverTest {
     }
 
     String currentUrl = _webDriver.getCurrentUrl();
+    String LOGIN_URL = String.format("http://localhost:%d/", serverPort);
     assertEquals(LOGIN_URL, currentUrl);
   }
 }
